@@ -9,9 +9,9 @@ import socket
 import struct
 import numpy as np
 import sounddevice as sd
-
+import os
 # -------- SETTINGS --------
-LISTEN_IP   = "0.0.0.0"                 # listen on all interfaces
+LISTEN_IP   = "192.168.0.159"                 # listen on all interfaces
 LISTEN_PORT = int(os.environ.get("LISTEN_PORT", "3001"))
 
 SAMPLE_RATE = 48000
@@ -20,7 +20,7 @@ FRAME_MS    = 20
 SAMPLES     = SAMPLE_RATE * FRAME_MS // 1000
 DTYPE       = "int16"
 
-TARGET_BUFFER_PACKETS = 5   # ~5 * 20ms = ~100ms prebuffer (raise if crackles; lower for less lag)
+TARGET_BUFFER_PACKETS = 1   # ~5 * 20ms = ~100ms prebuffer (raise if crackles; lower for less lag)
 # --------------------------
 
 def main():
@@ -47,7 +47,7 @@ def main():
 
     bytes_per_sample = 2
     frame_bytes = SAMPLES * CHANNELS * bytes_per_sample
-    silence = (np.zeros((SAMPLES, CHANNELS), dtype=DTYPE)).tobytes()
+    silence = np.zeros((SAMPLES, CHANNELS), dtype=DTYPE)  # Keep as numpy array
 
     try:
         while True:
@@ -76,7 +76,10 @@ def main():
             # If playing, write the next frame every loop
             if play_started and expected_seq is not None:
                 if expected_seq in buffer:
-                    out.write(buffer.pop(expected_seq))
+                    # Convert bytes to numpy array with correct shape
+                    audio_data = np.frombuffer(buffer.pop(expected_seq), dtype=DTYPE)
+                    audio_data = audio_data.reshape((SAMPLES, CHANNELS))
+                    out.write(audio_data)
                 else:
                     # Missing packet → write silence
                     out.write(silence)
