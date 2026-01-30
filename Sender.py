@@ -21,8 +21,8 @@ import sys
 import pyaudiowpatch as pyaudio
 
 # ------------SETTINGS------------
-DEST_IP = "192.168.0.159"
-DEST_PORT = 3001
+DEST_IP = "192.xxx.x.xxx"
+DEST_PORT = 3002
 
 SAMPLE_RATE = 48000  # Hz
 # CHANNELS = 2         # stereo

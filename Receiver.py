@@ -11,7 +11,7 @@ import numpy as np
 import sounddevice as sd
 import os
 # -------- SETTINGS --------
-LISTEN_IP   = "192.168.0.159"                 # listen on all interfaces
+LISTEN_IP   = "192.xxx.xxx.xxx"                 # listen on all interfaces
 LISTEN_PORT = int(os.environ.get("LISTEN_PORT", "3001"))
 
 SAMPLE_RATE = 48000
